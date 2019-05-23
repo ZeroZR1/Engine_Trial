@@ -1,12 +1,24 @@
 #include "stdafx.h"
 #include "Animator.h"
 
+/*Animation Definition*****************************************************************************************************/
+
+Animation::Animation(std::string AnimationName, std::vector<int> _AnimationFrames)
+{
+	AnimationFrames.resize(_AnimationFrames.size());
+	AnimationFrames = _AnimationFrames;
+	Name = AnimationName;
+}
+
+/*Animator Definition******************************************************************************************************/
 
 Animator::Animator(int TargetSpeed)
 {
-	State = 0;
+	CurrentFrame = 0;
 	Speed = TargetSpeed;
 	BuildUp = 0;
+	AnimationBuffer.reserve(3);
+	CurrentAnimation = 0;
 }
 
 
@@ -19,15 +31,15 @@ vector should be already set hence the resize*/
 void Animator::LoadPackage(std::vector<ALLEGRO_BITMAP*> Package){
 	Sprite.resize(Package.size());
 	Sprite = Package;
-	State = 0;
+	CurrentFrame = 0;
 }
 
-void Animator::SetState(int Index) {
-	State = Index;
+void Animator::SetCurrentFrame(int Index) {
+	CurrentFrame = Index;
 }
 
 ALLEGRO_BITMAP* Animator::Draw() {
-	return(Sprite[State]);
+	return(Sprite[CurrentFrame]);
 }
 
 ALLEGRO_BITMAP * Animator::Draw(int TargetState)
@@ -35,76 +47,86 @@ ALLEGRO_BITMAP * Animator::Draw(int TargetState)
 	return(Sprite[TargetState]);
 }
 
-ALLEGRO_BITMAP* Animator::DrawNext() {
-	if (State < Sprite.size()) {
-		State++;
-	}
-
-	return(Sprite[State]);
-}
-
 void Animator::Reset() {
-	State = 0;
+	CurrentFrame = 0;
+	BuildUp = 0;
 }
 
 void Animator::SetAnimationSpeed(int TargetSpeed){
 	Speed = TargetSpeed;
 }
 
+/*WORKING******************************************************************************************************************/
+void Animator::NewAnimation(std::string AnimationName, std::vector<int> _AnimationFrames) {
+	AnimationList.push_back(Animation(AnimationName, _AnimationFrames));
+}
 
-/*About Animate to and AnimateLoop, since its kinda messy I've consedered 
-splitting the core logic into sub functions, yet I also think it would be unnecessary*/
+void Animator::SetAnimation(std::string AnimationName)
+{
+	for (size_t i = 0; i < AnimationList.size(); i++)
+	{
+		if (AnimationList[i].Name == AnimationName) {
+			CurrentAnimation = i;
+			CurrentFrame = AnimationList[i].AnimationFrames[0];
+		}
+	}
+}
 
-
-void Animator::AnimateTo(int TargetState, bool Backward) {
-	int Direction;
-
-	if (Backward) 
-	{Direction = -1;}
-	else 
-	{Direction =  1;}
+void Animator::AnimateTo(bool Backward) {
 
 	if (BuildUp <= 10) {
 		BuildUp += 1 * Speed;
 	}
 	else {
-		if (State != TargetState) {
-			State += Direction;
+		if (!Backward && AnimationSubIndex < AnimationList[CurrentAnimation].AnimationFrames.size()-1) {
+			/*Ok, something is got to be done about this IF, likely we'l make a 
+			function to return sizes in nested vectors because... Look at that MESS!*/
+			AnimationSubIndex++;
+			CurrentFrame = AnimationList[ CurrentAnimation ].AnimationFrames[ AnimationSubIndex ];
 			BuildUp = 0;
-
-			if (State < 0 && Direction < 0) {
-				State = Sprite.size() - 1;
-			}
-			else if (State > Sprite.size() - 1 && Direction > 0) {
-				Reset();
-			}
+		}
+		else if (Backward && AnimationSubIndex > 0) {
+			AnimationSubIndex--;
+			CurrentFrame = AnimationList[CurrentAnimation].AnimationFrames[AnimationSubIndex];
+			BuildUp = 0;
 		}
 
 	}
 }
 
-void Animator::AnimateLoop(bool Backward) {
-	int Direction;
-
-	if (Backward)
-	{Direction = -1;}
-	else
-	{Direction = 1;}
-
+void Animator::AnimateLoop(bool Backward){
 	if (BuildUp <= 10) {
 		BuildUp += 1 * Speed;
 	}
 	else {
-		State += Direction;
-		BuildUp = 0;
+		if (!Backward) {
+			/*Ok, something is got to be done about this IF, likely we'l make a
+			function to return sizes in nested vectors because... Look at that MESS!*/
+			AnimationSubIndex++;
+			CurrentFrame = AnimationList[CurrentAnimation].AnimationFrames[AnimationSubIndex];
+			BuildUp = 0;
+			if (AnimationSubIndex >= AnimationList[CurrentAnimation].AnimationFrames.size() - 1) {
+				AnimationSubIndex = 0;
+			}
+		}
+		else if (Backward && AnimationSubIndex > 0) {
+			AnimationSubIndex--;
+			CurrentFrame = AnimationList[CurrentAnimation].AnimationFrames[AnimationSubIndex];
+			BuildUp = 0;
+			if (AnimationSubIndex < 0) {
+				AnimationSubIndex = AnimationList[CurrentAnimation].AnimationFrames.size() - 1;
+			}
+		}
 
-		if (State < 0 && Direction < 0) {
-			State = Sprite.size() - 1;
-		}
-		else if (State > Sprite.size() - 1 && Direction > 0) {
-			Reset();
-		}
 	}
 }
 
 
+/*WORKING******************************************************************************************************************/
+
+
+/*About Animate to and AnimateLoop, I'm itching to 
+split the core logic into sub functions, yet I also think it would be unnecessary
+Also considered using the two into one function
+
+PD they will likely become Obsolete with the new Animate and AnimateLoop(String)*/
