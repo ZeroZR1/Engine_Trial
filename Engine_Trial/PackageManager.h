@@ -1,8 +1,13 @@
 #pragma once
 #include <vector>
+#if __linux__
+#include <string.h>
+#elif _WINDOWS
 #include <string>
-#include <allegro5\allegro.h>
-#include <allegro5\allegro_image.h>
+#endif
+//allegro libraries
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
 
 /*A package and its manager are classes meant to 
 help with asset handling.
