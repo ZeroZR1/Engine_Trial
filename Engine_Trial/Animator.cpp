@@ -3,22 +3,26 @@
 
 /*Animation Definition*****************************************************************************************************/
 
-Animation::Animation(std::string AnimationName, std::vector<int> _AnimationFrames)
+Animation::Animation(bool _Looped, std::string AnimationName, std::vector<int> _AnimationFrames)
 {
-	AnimationFrames.resize(_AnimationFrames.size());
+	AnimationFrames.reserve(_AnimationFrames.size());
 	AnimationFrames = _AnimationFrames;
 	Name = AnimationName;
+	Looped = _Looped;
 }
 
 /*Animator Definition******************************************************************************************************/
 
-Animator::Animator(int TargetSpeed)
+Animator::Animator()
 {
 	CurrentFrame = 0;
-	Speed = TargetSpeed;
+	Speed = 1;
 	BuildUp = 0;
-	AnimationBuffer.reserve(3);
 	CurrentAnimation = 0;
+	AnimationList.clear();
+	AnimationList.shrink_to_fit();
+
+	AnimationBuffer.reserve(3);
 }
 
 
@@ -26,25 +30,17 @@ Animator::~Animator()
 {
 }
 
-/*Loads the sprite from a Package to be used, the size of the 
-vector should be already set hence the resize*/
-void Animator::LoadPackage(std::vector<ALLEGRO_BITMAP*> Package){
-	Sprite.resize(Package.size());
-	Sprite = Package;
-	CurrentFrame = 0;
-}
-
 void Animator::SetCurrentFrame(int Index) {
 	CurrentFrame = Index;
 }
 
-ALLEGRO_BITMAP* Animator::Draw() {
-	return(Sprite[CurrentFrame]);
+ALLEGRO_BITMAP* Animator::Draw(std::vector<ALLEGRO_BITMAP*> _Sprite) {
+	return(_Sprite[CurrentFrame]);
 }
 
-ALLEGRO_BITMAP * Animator::Draw(int TargetState)
+ALLEGRO_BITMAP * Animator::Draw(int TargetState, std::vector<ALLEGRO_BITMAP*> _Sprite)
 {
-	return(Sprite[TargetState]);
+	return(_Sprite[TargetState]);
 }
 
 void Animator::Reset() {
@@ -56,9 +52,9 @@ void Animator::SetAnimationSpeed(int TargetSpeed){
 	Speed = TargetSpeed;
 }
 
-/*WORKING******************************************************************************************************************/
-void Animator::NewAnimation(std::string AnimationName, std::vector<int> _AnimationFrames) {
-	AnimationList.push_back(Animation(AnimationName, _AnimationFrames));
+
+void Animator::NewAnimation(bool _Loop,std::string AnimationName, std::vector<int> _AnimationFrames) {
+	AnimationList.push_back(Animation(_Loop, AnimationName, _AnimationFrames));
 }
 
 void Animator::SetAnimation(std::string AnimationName)
@@ -72,61 +68,57 @@ void Animator::SetAnimation(std::string AnimationName)
 	}
 }
 
-void Animator::AnimateTo(bool Backward) {
+
+/*Just realized Animation moving backwards is dumb, I mean you could just create anoter animation
+going backwards and thats it*/
+
+void Animator::AnimateTo() {
 
 	if (BuildUp <= 10) {
-		BuildUp += 1 * Speed;
+		BuildUp += 1 +(1* Speed);
 	}
 	else {
-		if (!Backward && AnimationSubIndex < AnimationList[CurrentAnimation].AnimationFrames.size()-1) {
+		if (AnimationSubIndex < AnimationList[CurrentAnimation].AnimationFrames.size()-1) {
 			/*Ok, something is got to be done about this IF, likely we'l make a 
-			function to return sizes in nested vectors because... Look at that MESS!*/
+			function to return sizes in nested vectors because... Look at that MESS!
+			Also it give signed unsigned mismatch because .size() return a size_t which is an usingned int*/
 			AnimationSubIndex++;
 			CurrentFrame = AnimationList[ CurrentAnimation ].AnimationFrames[ AnimationSubIndex ];
 			BuildUp = 0;
 		}
-		else if (Backward && AnimationSubIndex > 0) {
-			AnimationSubIndex--;
-			CurrentFrame = AnimationList[CurrentAnimation].AnimationFrames[AnimationSubIndex];
-			BuildUp = 0;
-		}
 
 	}
 }
 
-void Animator::AnimateLoop(bool Backward){
+
+void Animator::AnimateLoop(){
 	if (BuildUp <= 10) {
 		BuildUp += 1 * Speed;
 	}
 	else {
-		if (!Backward) {
 			/*Ok, something is got to be done about this IF, likely we'l make a
 			function to return sizes in nested vectors because... Look at that MESS!*/
 			AnimationSubIndex++;
-			CurrentFrame = AnimationList[CurrentAnimation].AnimationFrames[AnimationSubIndex];
 			BuildUp = 0;
-			if (AnimationSubIndex >= AnimationList[CurrentAnimation].AnimationFrames.size() - 1) {
+			if (AnimationSubIndex > AnimationList[CurrentAnimation].AnimationFrames.size() - 1) {
 				AnimationSubIndex = 0;
 			}
-		}
-		else if (Backward && AnimationSubIndex > 0) {
-			AnimationSubIndex--;
 			CurrentFrame = AnimationList[CurrentAnimation].AnimationFrames[AnimationSubIndex];
-			BuildUp = 0;
-			if (AnimationSubIndex < 0) {
-				AnimationSubIndex = AnimationList[CurrentAnimation].AnimationFrames.size() - 1;
-			}
-		}
-
 	}
 }
 
 
-/*WORKING******************************************************************************************************************/
+void Animator::Animate() {
+	if (AnimationList[CurrentAnimation].Looped) {
+		AnimateLoop();
+	}
+	else {
+		AnimateTo();
+	}
+}
 
 
 /*About Animate to and AnimateLoop, I'm itching to 
 split the core logic into sub functions, yet I also think it would be unnecessary
-Also considered using the two into one function
 
-PD they will likely become Obsolete with the new Animate and AnimateLoop(String)*/
+*/

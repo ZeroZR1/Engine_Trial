@@ -8,10 +8,11 @@ This will be reconsidered if it gets too messy*/
 
 class Animation {
 public:
+	bool Looped;
 	std::vector<int> AnimationFrames;
 	std::string Name;
 
-	Animation(std::string AnimationName, std::vector<int> _AnimationFrames);
+	Animation(bool _Looped, std::string AnimationName, std::vector<int> _AnimationFrames);
 };
 
 /*Animator Declaration*****************************************************************************************************/
@@ -19,7 +20,6 @@ public:
 class Animator{
 public:
 /*-------------------------------------*/
-	std::vector<ALLEGRO_BITMAP*> Sprite;
 	std::vector<Animation> AnimationList;
 
 	std::vector <std::string> AnimationBuffer;//I got plans for this, in the animation transitioning
@@ -31,29 +31,29 @@ public:
 	int BuildUp;
 	int Speed;
 /*-------------------------------------*/
-	Animator(int TargetSpeed);
+	Animator();
 
 	~Animator();
 
-	void LoadPackage(std::vector<ALLEGRO_BITMAP*> Package);
-
 	void SetCurrentFrame(int Index);
 
-	ALLEGRO_BITMAP* Draw();
+	ALLEGRO_BITMAP* Draw(std::vector<ALLEGRO_BITMAP*> _Sprite);
 
-	ALLEGRO_BITMAP* Draw(int TargetState);
+	ALLEGRO_BITMAP* Draw(int TargetState, std::vector<ALLEGRO_BITMAP*> _Sprite);
 
 	void Reset();
 
 	void SetAnimationSpeed(int TargetSpeed);
 
-	void NewAnimation(std::string AnimationName, std::vector<int> _AnimationFrames);
+	void NewAnimation(bool _Loop, std::string AnimationName, std::vector<int> _AnimationFrames);
 
 	void SetAnimation(std::string AnimationName);
 
-	void AnimateTo(bool Backward);
+	void AnimateTo();
 
-	void AnimateLoop(bool Backward);
+	void AnimateLoop();
+
+	void Animate();
 };
 
 /**************************************************************************************************************************/

@@ -20,7 +20,7 @@ public:
 	std::vector<std::string> Directory;
 
 
-	Package(std::string Name, std::string Type, int Archive_Number, std::vector<std::string> Data);
+	Package(std::string Name, std::string Type, std::vector<std::string> Data);
 
 	~Package();
 };
@@ -35,7 +35,7 @@ public:
 
 	~PackageManager() {};
 
-	void AddPackage(std::string _Name, std::string _Type, int Package_Qtty, std::vector<std::string> ArchiveName);
+	void AddPackage(std::string _Name, std::string _Type, std::vector<std::string> ArchiveName);
 
 	std::vector<ALLEGRO_BITMAP*> UnpackImage(std::string PackageName);
 
