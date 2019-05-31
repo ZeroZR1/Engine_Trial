@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+
 #if __linux__
 #include <string.h>
 #elif _WINDOWS
