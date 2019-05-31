@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Animator.h"
+#include "Hitbox.h"
 
 class GameObject
 {public:
@@ -9,7 +10,9 @@ class GameObject
 	float y;
 
 	std::vector<ALLEGRO_BITMAP*> Sprite;
+
 	Animator ObjAnimator;
+	Hitbox ObjHitbox;
 	
 	GameObject(float _x, float _y);
 
@@ -25,8 +28,9 @@ class GameObject
 
 	void ActiveAnimation(std::string _AnimationName);
 
+	void InitHitbox(float _Width, float _Height);
 
-	void Check();;
+	void Check();
 
 };
 

@@ -24,8 +24,10 @@ public:
 
 	std::vector <std::string> AnimationBuffer;//I got plans for this, in the animation transitioning
 	int CurrentAnimation;
-	int AnimationSubIndex;/*Used to difentiate from the local coordinates 
+	int AnimationSubIndex;
+	/*Used to difentiate from the local coordinates 
 	used to navigate AnimationList from CurrentFrame wich is the global index to navigate Sprite*/
+
 	int CurrentFrame;
 
 	int BuildUp;

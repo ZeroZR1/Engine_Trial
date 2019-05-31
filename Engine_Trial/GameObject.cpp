@@ -7,12 +7,9 @@ GameObject::GameObject(float _x, float _y) {
 	y = _y;
 	Sprite.clear();
 	Sprite.shrink_to_fit();
-
 }
 
-GameObject::~GameObject()
-{
-}
+GameObject::~GameObject(){}
 
 void GameObject::SetPosition(float _x, float _y) {
 	x = _x;
@@ -34,6 +31,10 @@ void GameObject::AddAnimation(bool _Loop, std::string _AnimationName, std::vecto
 
 void GameObject::ActiveAnimation(std::string _AnimationName) {
 	ObjAnimator.SetAnimation(_AnimationName);
+}
+
+void GameObject::InitHitbox(float _Width, float _Height) {
+	ObjHitbox.HitboxInit(x,y, _Width, _Height);
 }
 
 //Here goes everithing the object does every frame
