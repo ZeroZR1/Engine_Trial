@@ -9,6 +9,7 @@ class GameObject
 	float y;
 
 	std::vector<ALLEGRO_BITMAP*> Sprite;
+	std::vector<Sprite> Chucrut;
 	Animator ObjAnimator;
 
 	GameObject(float _x, float _y);

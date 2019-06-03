@@ -30,11 +30,15 @@ void PackageManager::AddPackage(std::string Name, std::string Type, std::vector<
 	return(Data);
 }*/
 
-std::vector<ALLEGRO_BITMAP*> PackageManager::UnpackImage(std::string PackageName) {
+std::vector<ALLEGRO_BITMAP*> PackageManager::UnpackImage(std::string PackageName,NumCuadritos,) {
 
 	std::vector<ALLEGRO_BITMAP*> Data;
 
-	Data.push_back((al_load_bitmap(PackageName.c_str())));
+	ALLEGRO_BITMAP* Cosa;
+
+	Cosa = (al_load_bitmap(PackageName.c_str()));
+
+	Data.push_back(Cosa.blit(...));
 	return(Data);
 }
 

@@ -6,6 +6,22 @@ This will be reconsidered if it gets too messy*/
 
 /*Animation Declaration****************************************************************************************************/
 
+class Sprite {
+public:
+	int x;
+	int y;
+	int Width;
+	int Height;
+
+	Sprite(int _x, int _y, int _Width, int _Height) {
+		x = _x;
+		y = _y;
+		Width = _Width;
+		Height = _Height;
+	}
+
+};
+
 class Animation {
 public:
 	bool Looped;
