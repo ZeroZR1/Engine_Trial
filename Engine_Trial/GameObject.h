@@ -10,7 +10,7 @@ class GameObject
 
 	std::vector<ALLEGRO_BITMAP*> Sprite;
 	Animator ObjAnimator;
-	
+
 	GameObject(float _x, float _y);
 
 	~GameObject();
