@@ -10,7 +10,7 @@ void PackageManager::AddPackage(std::string Name, std::string Type, std::vector<
 		Wrapped.push_back (Package(Name, Type, ArchiveName));
 }
 
-std::vector<ALLEGRO_BITMAP*> PackageManager::UnpackImage(std::string PackageName) {
+/*std::vector<ALLEGRO_BITMAP*> PackageManager::UnpackImage(std::string PackageName) {
 
 	std::vector<ALLEGRO_BITMAP*> Data;
 
@@ -28,7 +28,16 @@ std::vector<ALLEGRO_BITMAP*> PackageManager::UnpackImage(std::string PackageName
 		}
 	}
 	return(Data);
+}*/
+
+std::vector<ALLEGRO_BITMAP*> PackageManager::UnpackImage(std::string PackageName) {
+
+	std::vector<ALLEGRO_BITMAP*> Data;
+
+	Data.push_back((al_load_bitmap(PackageName.c_str())));
+	return(Data);
 }
+
 
 /*Package Definition*******************************************************************************************************/
 

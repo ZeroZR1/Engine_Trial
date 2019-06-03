@@ -20,7 +20,7 @@ void GameObject::SetPosition(float _x, float _y) {
 }
 
 void GameObject::SetSprite(std::vector<ALLEGRO_BITMAP*> _Sprite) {
-	Sprite.reserve(_Sprite.size());
+	//Sprite.reserve(_Sprite.size());
 	Sprite = _Sprite;
 }
 void GameObject::DrawObject() {
